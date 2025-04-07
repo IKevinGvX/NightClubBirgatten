@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Button } from "react-native";
+import { View } from "react-native";
 import * as Notifications from "expo-notifications";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -9,6 +9,7 @@ import Loggin from "./src/components/Loggin";
 import Principal from "./src/components/Principal";
 import MenuScreen from "./screens/MenuScreen";
 import CreateBebida from "./screens/CreateBebida";
+import CartaScreen from "./screens/CartaScreen";
 import styles from "./src/components/styles";
 
 const Stack = createNativeStackNavigator();
@@ -19,17 +20,20 @@ export default function App() {
   const [expoPushToken, setExpoPushToken] = useState("");
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
 
-    Notifications.addNotificationReceivedListener(notification => {
+    Notifications.addNotificationReceivedListener((notification) => {
       console.log("Notificación recibida: ", notification);
     });
 
-    Notifications.addNotificationResponseReceivedListener(response => {
+    Notifications.addNotificationResponseReceivedListener((response) => {
       console.log("Respuesta a la notificación: ", response);
     });
   }, []);
 
+  // Función para registrar notificaciones push
   const registerForPushNotificationsAsync = async () => {
     const { status } = await Notifications.requestPermissionsAsync();
     if (status !== "granted") {
@@ -42,13 +46,15 @@ export default function App() {
     return token.data;
   };
 
+  // Manejo del inicio de sesión
   const handleLogin = (email, password) => {
     console.log("Iniciando sesión con:", email, password);
-    setUser(email);
+    setUser(email); // Aquí se podría hacer un manejo de usuario más complejo
     setScreen("principal");
-    sendPushNotification();
+    sendPushNotification(); // Enviar notificación al iniciar sesión
   };
 
+  // Enviar notificación push
   const sendPushNotification = async () => {
     if (expoPushToken) {
       const message = {
@@ -56,12 +62,13 @@ export default function App() {
         sound: "default",
         title: "¡Bienvenido!",
         body: "Has iniciado sesión correctamente.",
-        data: { data: "Más detalles de la sesión" },
+        data: { data: "Más detalles de la sesión" }
       };
 
+      // Programar la notificación para que se ejecute después de 2 segundos
       await Notifications.scheduleNotificationAsync({
         content: message,
-        trigger: { seconds: 2 },
+        trigger: { seconds: 2 }
       });
     }
   };
@@ -69,21 +76,23 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* Root Screen usando estados internos */}
+        {/* Pantalla raíz utilizando un solo componente condicional para manejar el flujo */}
         <Stack.Screen name="Root">
           {() => (
             <View style={styles.container}>
-              {screen === "inicio" && <Inicio onStart={() => setScreen("loggin")} />}
+              {screen === "inicio" && (
+                <Inicio onStart={() => setScreen("loggin")} />
+              )}
               {screen === "loggin" && <Loggin onLogin={handleLogin} />}
               {screen === "principal" && user && <Principal user={user} />}
-              <Button title="Enviar Notificación de prueba" onPress={sendPushNotification} />
             </View>
           )}
         </Stack.Screen>
 
-        {/* Accesos adicionales desde MenuScreen */}
+        {/* Navegación adicional */}
         <Stack.Screen name="Menu" component={MenuScreen} />
         <Stack.Screen name="CreateBebida" component={CreateBebida} />
+        <Stack.Screen name="CartaScreen" component={CartaScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  ScrollView,
+  ScrollView
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import axios from "axios";
@@ -18,7 +18,7 @@ const CreateBebida = ({ navigation }) => {
     precio: "",
     stock: "",
     categoria: "",
-    estado: "activo",
+    estado: "activo"
   });
 
   const [alertVisible, setAlertVisible] = useState(false);
@@ -38,13 +38,13 @@ const CreateBebida = ({ navigation }) => {
     { label: "Rum", value: "Rum" },
     { label: "Vodka", value: "Vodka" },
     { label: "Comida", value: "Comida" },
-    { label: "Otros", value: "Otros" },
+    { label: "Otros", value: "Otros" }
   ]);
 
   const handleInputChange = (field, value) => {
     setProduct((prevState) => ({
       ...prevState,
-      [field]: value,
+      [field]: value
     }));
   };
 
@@ -69,11 +69,14 @@ const CreateBebida = ({ navigation }) => {
       stock: parseInt(stock),
       categoria,
       estado,
-      fechaIngreso: new Date(),
+      fechaIngreso: new Date()
     };
 
     try {
-      await axios.post("http://apiswagger.somee.com/api/productos/addme", newBebida);
+      await axios.post(
+        "http://apiswagger.somee.com/api/productos/addme",
+        newBebida
+      );
       navigation.goBack(); // Regresar al listado de productos
     } catch (error) {
       setAlertMessage("Could not create the product");
@@ -149,7 +152,7 @@ const styles = StyleSheet.create({
     color: "#FFD700",
     fontWeight: "bold",
     textAlign: "center",
-    marginVertical: 20,
+    marginVertical: 20
   },
   input: {
     backgroundColor: "#2a2a2a",
@@ -157,17 +160,17 @@ const styles = StyleSheet.create({
     padding: 12,
     color: "#fff",
     marginBottom: 12,
-    fontSize: 16,
+    fontSize: 16
   },
   dropdown: {
     backgroundColor: "#2a2a2a",
     borderColor: "#444",
     marginBottom: 12,
-    borderRadius: 12,
+    borderRadius: 12
   },
   dropdownContainer: {
     backgroundColor: "#2a2a2a",
-    borderColor: "#444",
+    borderColor: "#444"
   },
   saveButton: {
     backgroundColor: "#FFD700",
@@ -175,13 +178,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 20
   },
   saveButtonText: {
     color: "#000",
     fontWeight: "bold",
-    fontSize: 16,
-  },
+    fontSize: 16
+  }
 });
 
 export default CreateBebida;

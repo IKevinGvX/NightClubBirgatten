@@ -8,7 +8,7 @@ import {
   Modal,
   TextInput,
   TouchableWithoutFeedback,
-  Keyboard,
+  Keyboard
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
@@ -27,7 +27,7 @@ const MenuScreen = () => {
     stock: "",
     categoria: "",
     estado: "activo",
-    fechaIngreso: new Date(),
+    fechaIngreso: new Date()
   });
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -39,7 +39,9 @@ const MenuScreen = () => {
 
   const fetchProductos = async () => {
     try {
-      const response = await axios.get("http://apiswagger.somee.com/api/productos/list");
+      const response = await axios.get(
+        "http://apiswagger.somee.com/api/productos/list"
+      );
       setBebidas(response.data);
     } catch (error) {
       setAlertMessage("No se pudo cargar la lista de productos.");
@@ -73,7 +75,7 @@ const MenuScreen = () => {
         stock: item.stock.toString(),
         categoria: item.categoria,
         estado: item.estado,
-        fechaIngreso: new Date(item.fechaIngreso),
+        fechaIngreso: new Date(item.fechaIngreso)
       });
       setModalVisible(true);
     }
@@ -81,7 +83,10 @@ const MenuScreen = () => {
 
   const updateProducto = async (id, updatedProduct) => {
     try {
-      await axios.put(`http://apiswagger.somee.com/api/productos/update/${id}`, updatedProduct);
+      await axios.put(
+        `http://apiswagger.somee.com/api/productos/update/${id}`,
+        updatedProduct
+      );
       fetchProductos();
       setAlertMessage("Producto actualizado correctamente.");
       setAlertVisible(true);
@@ -92,7 +97,16 @@ const MenuScreen = () => {
   };
 
   const guardarBebida = async () => {
-    const { nombre, descripcion, precio, stock, categoria, estado, productoID, fechaIngreso } = product;
+    const {
+      nombre,
+      descripcion,
+      precio,
+      stock,
+      categoria,
+      estado,
+      productoID,
+      fechaIngreso
+    } = product;
 
     if (!nombre || !descripcion || !precio || !categoria || !stock) {
       setAlertMessage("Completa todos los campos.");
@@ -111,7 +125,7 @@ const MenuScreen = () => {
       stock: parseInt(stock),
       categoria,
       estado,
-      fechaIngreso: new Date(fechaIngreso).toISOString(),
+      fechaIngreso: new Date(fechaIngreso).toISOString()
     };
 
     await updateProducto(productoID, updatedBebida);
@@ -120,7 +134,9 @@ const MenuScreen = () => {
 
   const deleteProducto = async (id) => {
     try {
-      await axios.delete(`http://apiswagger.somee.com/api/productos/deleting/${id}`);
+      await axios.delete(
+        `http://apiswagger.somee.com/api/productos/deleting/${id}`
+      );
       setAlertMessage("Producto eliminado correctamente.");
       setAlertVisible(true);
       setBebidas(bebidas.filter((b) => b.productoID !== id));
@@ -133,7 +149,11 @@ const MenuScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <MaterialCommunityIcons name="glass-mug-variant" size={35} color="#FFD700" />
+        <MaterialCommunityIcons
+          name="glass-mug-variant"
+          size={35}
+          color="#FFD700"
+        />
         <Text style={styles.title}>Drink Menu</Text>
       </View>
 
@@ -153,22 +173,37 @@ const MenuScreen = () => {
             <View style={styles.cardContent}>
               <Text style={styles.nombre}>{item.nombre}</Text>
               <Text style={styles.precio}>S/. {item.precio}</Text>
-              <Text style={styles.fechaIngreso}>Incorporado: {new Date(item.fechaIngreso).toLocaleDateString()}</Text>
-              <Text style={styles.estado}>{item.estado === "activo" ? "Disponible" : "No disponible"}</Text>
+              <Text style={styles.fechaIngreso}>
+                Incorporado: {new Date(item.fechaIngreso).toLocaleDateString()}
+              </Text>
+              <Text style={styles.estado}>
+                {item.estado === "activo" ? "Disponible" : "No disponible"}
+              </Text>
             </View>
             <View style={styles.actions}>
               <TouchableOpacity onPress={() => abrirModal(item)}>
-                <MaterialCommunityIcons name="pencil" size={22} color="#FFD700" />
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={22}
+                  color="#FFD700"
+                />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => deleteProducto(item.productoID)}>
-                <MaterialCommunityIcons name="delete" size={22} color="#ff4444" />
+                <MaterialCommunityIcons
+                  name="delete"
+                  size={22}
+                  color="#ff4444"
+                />
               </TouchableOpacity>
             </View>
           </View>
         )}
       />
 
-      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate("CreateBebida")}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate("CreateBebida")}
+      >
         <MaterialCommunityIcons name="plus" size={28} color="#000" />
       </TouchableOpacity>
 
@@ -178,15 +213,62 @@ const MenuScreen = () => {
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Editar Producto</Text>
 
-              <TextInput style={styles.input} placeholder="Nombre" value={product.nombre} onChangeText={(text) => handleInputChange("nombre", text)} placeholderTextColor="#aaa" />
-              <TextInput style={styles.input} placeholder="Descripción" value={product.descripcion} onChangeText={(text) => handleInputChange("descripcion", text)} placeholderTextColor="#aaa" />
-              <TextInput style={styles.input} placeholder="Precio" value={product.precio.toString()} keyboardType="numeric" onChangeText={(text) => handleInputChange("precio", text)} placeholderTextColor="#aaa" />
-              <TextInput style={styles.input} placeholder="Stock" value={product.stock.toString()} keyboardType="numeric" onChangeText={(text) => handleInputChange("stock", text)} placeholderTextColor="#aaa" />
-              <TextInput style={styles.input} placeholder="Categoría" value={product.categoria} onChangeText={(text) => handleInputChange("categoria", text)} placeholderTextColor="#aaa" />
-              <TextInput style={styles.input} placeholder="Estado" value={product.estado} onChangeText={(text) => handleInputChange("estado", text)} placeholderTextColor="#aaa" />
-              <TextInput style={styles.input} placeholder="Fecha de Ingreso" value={new Date(product.fechaIngreso).toLocaleString()} editable={false} placeholderTextColor="#aaa" />
+              <TextInput
+                style={styles.input}
+                placeholder="Nombre"
+                value={product.nombre}
+                onChangeText={(text) => handleInputChange("nombre", text)}
+                placeholderTextColor="#aaa"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Descripción"
+                value={product.descripcion}
+                onChangeText={(text) => handleInputChange("descripcion", text)}
+                placeholderTextColor="#aaa"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Precio"
+                value={product.precio.toString()}
+                keyboardType="numeric"
+                onChangeText={(text) => handleInputChange("precio", text)}
+                placeholderTextColor="#aaa"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Stock"
+                value={product.stock.toString()}
+                keyboardType="numeric"
+                onChangeText={(text) => handleInputChange("stock", text)}
+                placeholderTextColor="#aaa"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Categoría"
+                value={product.categoria}
+                onChangeText={(text) => handleInputChange("categoria", text)}
+                placeholderTextColor="#aaa"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Estado"
+                value={product.estado}
+                onChangeText={(text) => handleInputChange("estado", text)}
+                placeholderTextColor="#aaa"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Fecha de Ingreso"
+                value={new Date(product.fechaIngreso).toLocaleString()}
+                editable={false}
+                placeholderTextColor="#aaa"
+              />
 
-              <TouchableOpacity style={styles.saveButton} onPress={guardarBebida}>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={guardarBebida}
+              >
                 <Text style={styles.saveButtonText}>Guardar Cambios</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
@@ -218,16 +300,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 20,
-    gap: 10,
+    gap: 10
   },
-  title: { fontSize: 26, color: "#FFD700", fontWeight: "bold", textAlign: "center" },
+  title: {
+    fontSize: 26,
+    color: "#FFD700",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
   searchInput: {
     backgroundColor: "#2a2a2a",
     borderRadius: 12,
     padding: 12,
     color: "#fff",
     marginBottom: 20,
-    fontSize: 16,
+    fontSize: 16
   },
   card: {
     backgroundColor: "#333",
@@ -239,7 +326,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowOffset: { width: 0, height: 6 },
     shadowRadius: 10,
-    elevation: 8,
+    elevation: 8
   },
   cardContent: { marginBottom: 10 },
   nombre: { color: "#FFD700", fontSize: 18, fontWeight: "bold" },
@@ -257,27 +344,27 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 6,
+    elevation: 6
   },
   modalBackground: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 20
   },
   modalContainer: {
     backgroundColor: "#1e1e1e",
     borderRadius: 20,
     padding: 20,
-    width: "100%",
+    width: "100%"
   },
   modalTitle: {
     color: "#FFD700",
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 15,
-    textAlign: "center",
+    textAlign: "center"
   },
   input: {
     backgroundColor: "#2a2a2a",
@@ -285,17 +372,22 @@ const styles = StyleSheet.create({
     padding: 12,
     color: "#fff",
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 10
   },
   saveButton: {
     backgroundColor: "#FFD700",
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 10
   },
   saveButtonText: { color: "#000", fontWeight: "bold", fontSize: 16 },
-  cancelText: { textAlign: "center", color: "#ccc", marginTop: 15, fontSize: 15 },
+  cancelText: {
+    textAlign: "center",
+    color: "#ccc",
+    marginTop: 15,
+    fontSize: 15
+  }
 });
 
 export default MenuScreen;
